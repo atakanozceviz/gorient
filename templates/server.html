@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {{template "header"}}
+    <title>{{.Title}}</title>
+    <style>
+        html {
+            text-align: center;
+        }
+
+        body {
+            display: inline-block;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+        }
+
+        .midtext {
+            width: 200px;
+            height: 200px;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            color: #FFFFFF;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div id="qr"></div>
+<p id="info">Scan QR code to connect</p>
+
+<table style="font-size: x-small" width="100%">
+    <tr>
+        <td>Alpha</td>
+        <td id="alphas"></td>
+    </tr>
+    <tr>
+        <td>Beta</td>
+        <td id="betas"></td>
+    </tr>
+    <tr>
+        <td>Gamma</td>
+        <td id="gammas"></td>
+    </tr>
+</table>
+<br/>
+<div style="perspective: 300px;">
+    <img src="/static/img/logo.png" id="imgLogo" class="box">
+</div>
+<br/>
+<div id="color" class="box" onclick="fullscreen($(this))"><sup class="midtext">Click Me!</sup></div>
+
+<img id="wheel" src="/static/img/wheel.png" width="180" height="180" style="display: none;">
+<canvas id="canvas" width="180" height="180" style="display: none;"></canvas>
+
+<script src="/static/js/vendor/jquery-2.2.3.min.js" type="text/javascript"></script>
+<script src="/static/js/vendor/screenfull.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    var HOST = "{{.Host}}";
+
+    function fullscreen(target) {
+        if (screenfull.enabled) {
+            screenfull.toggle(target[0]);
+
+            target.width(screen.width);
+            target.height(screen.height);
+
+            $(".midtext").hide();
+
+            screenfull.onchange(function () {
+                if (!screenfull.isFullscreen) {
+                    target.width("200px");
+                    target.height("200px");
+                    $(".midtext").show();
+                }
+            });
+        }
+    }
+</script>
+<script src="/iris-ws.js" type="text/javascript"></script>
+<script src="/static/js/server.js" type="text/javascript"></script>
+</body>
+</html>
