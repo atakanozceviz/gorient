@@ -3,57 +3,48 @@ package main
 import (
 	"os"
 
-	"gopkg.in/kataras/iris.v6"
-	"gopkg.in/kataras/iris.v6/adaptors/httprouter"
-	"gopkg.in/kataras/iris.v6/adaptors/view"
-	"gopkg.in/kataras/iris.v6/adaptors/websocket"
+	"github.com/kataras/iris"
+	"github.com/kataras/iris/websocket"
 )
 
 var port = os.Getenv("PORT")
 
-type clientPage struct {
-	Title string
-	Host  string
-}
-
-type devicePage struct {
-	Title string
-	Host  string
-	ID    string
-}
-
 func main() {
 	app := iris.New()
-
-	ws := websocket.New(websocket.Config{
-		Endpoint:         "/ws",
-		ClientSourcePath: "/iris-ws.js",
-	})
-
-	app.Adapt(
-		iris.DevLogger(),
-		httprouter.New(),
-		view.HTML("./templates", ".html"),
-		ws,
-	)
+	tmpl := iris.HTML("./templates", ".html")
+	setupWebsocket(app)
+	app.RegisterView(tmpl)
 
 	app.StaticWeb("/static/", "./static/")
 
-	app.Get("/favicon.ico", func(ctx *iris.Context) {
+	app.Get("/favicon.ico", func(ctx iris.Context) {
 		ctx.ServeFile("./static/img/favicon.ico", false)
 	})
 
-	app.Get("/", func(ctx *iris.Context) {
-
-		ctx.Render("server.html", clientPage{"Server Page", ctx.Host()})
+	app.Get("/", func(ctx iris.Context) {
+		ctx.ViewData("Title", "Server Page")
+		ctx.ViewData("Host", ctx.Host())
+		ctx.View("server.html")
 
 	})
 
-	app.Get("/device", func(ctx *iris.Context) {
+	app.Get("/device", func(ctx iris.Context) {
 		id := ctx.FormValue("id")
-		ctx.Render("device.html", devicePage{"Device Page", ctx.Host(), id})
+		ctx.ViewData("Title", "Server Page")
+		ctx.ViewData("Host", ctx.Host())
+		ctx.ViewData("ID", id)
+		ctx.View("device.html")
 	})
 
+	app.Run(iris.Addr(":" + port))
+}
+
+func setupWebsocket(app *iris.Application) {
+	// create our echo websocket server
+	ws := websocket.New(websocket.Config{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	})
 	ws.OnConnection(func(c websocket.Connection) {
 		c.Emit("ID", c.ID())
 		c.On("TO", func(to string) {
@@ -68,5 +59,14 @@ func main() {
 		})
 
 	})
-	app.Listen(":" + port)
+
+	// register the server on an endpoint.
+	// see the inline javascript code in the websockets.html, this endpoint is used to connect to the server.
+	app.Get("/ws", ws.Handler())
+
+	// serve the javascript built'n client-side library,
+	// see websockets.html script tags, this path is used.
+	app.Any("/iris-ws.js", func(ctx iris.Context) {
+		ctx.Write(websocket.ClientSource)
+	})
 }

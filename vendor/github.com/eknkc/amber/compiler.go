@@ -741,7 +741,7 @@ func (c *Compiler) visitExpression(outerexpr ast.Expr) string {
 						break
 					}
 				}
-				for fname, _ := range FuncMap {
+				for fname := range FuncMap {
 					if fname == ident.Name {
 						builtin = true
 						break
