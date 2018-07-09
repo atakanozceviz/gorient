@@ -23,7 +23,6 @@ if (window.DeviceOrientationEvent) {
         if (!!eventData.gamma) {
             //w.EmitMessage(JSON.stringify({gamma: eventData.gamma, beta: eventData.beta, alpha: eventData.alpha}));
             w.Emit("Data", JSON.stringify({
-                ID: ID,
                 gamma: eventData.gamma,
                 beta: eventData.beta,
                 alpha: eventData.alpha

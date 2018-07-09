@@ -48,14 +48,15 @@ func setupWebsocket(app *iris.Application) {
 	ws.OnConnection(func(c websocket.Connection) {
 		c.Emit("ID", c.ID())
 		c.On("TO", func(to string) {
-			c.SetValue(c.ID(), to)
+			c.SetValue("TO", to)
+			c.To(to).Emit("CON", "Client connected!")
 		})
 		c.On("Data", func(data string) {
-			c.To(data[7:71]).EmitMessage([]byte(data))
+			c.To(c.GetValueString("TO")).EmitMessage([]byte(data))
 		})
 
 		c.OnDisconnect(func() {
-			c.To(c.GetValueString(c.ID())).Emit("DC", "Client disconnected!")
+			c.To(c.GetValueString("TO")).Emit("DC", "Client disconnected!")
 		})
 
 	})

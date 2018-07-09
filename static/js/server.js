@@ -23,7 +23,6 @@ $(function () {
                 "msTransform" in logoStyle ? "msTransform" : false;
 
     _transform && w.OnMessage(function (message) {
-        $("#qr,#info").hide();
         var data = JSON.parse(message);
 
         var gamma = data.gamma;
@@ -48,6 +47,10 @@ $(function () {
         var txt = '<img src="https://api.qrserver.com/v1/create-qr-code/?data=' + location.href + 'device?id=' + message + '&amp;size=200x200" alt="" title="" />'
         $("#qr").append(txt)
     });
+
+    w.On("CON", function () {
+        $("#qr,#info").hide();
+    })
 
     w.On("DC", function () {
         $("#qr,#info").show();
