@@ -32,3 +32,8 @@
 [prune]
   go-tests = true
   unused-packages = true
+
+[metadata.heroku]
+  root-package = "github.com/atakanozceviz/gorient"
+  go-version = "1.10.3"
+  install = [ "./..." ]
