@@ -57,7 +57,7 @@
         <img src="/static/img/logo.png" id="imgLogo" class="box">
     </div>
     <br/>
-    <div id="color" class="box" onclick="fullscreen($(this))">
+    <div id="color" class="box">
         <sup class="midtext">Click Me!</sup>
     </div>
 
@@ -65,28 +65,20 @@
     <canvas id="canvas" width="180" height="180" style="display: none;"></canvas>
 
     <script src="/static/js/lib/jquery-2.2.4.min.js" type="text/javascript"></script>
-    <script src="/static/js/lib/screenfull.min.js" type="text/javascript"></script>
     <script type="text/javascript">
         var HOST = "{{.Host}}";
 
-        function fullscreen(target) {
-            if (screenfull.enabled) {
-                screenfull.toggle(target[0]);
-
-                target.width(screen.width);
-                target.height(screen.height);
-
-                $(".midtext").hide();
-
-                screenfull.onchange(function () {
-                    if (!screenfull.isFullscreen) {
-                        target.width("200px");
-                        target.height("200px");
-                        $(".midtext").show();
-                    }
-                });
+        $('#color').on('click', function () {
+            var elem = document.getElementById('color');
+            if (document.webkitFullscreenElement) {
+                document.webkitCancelFullScreen();
+                $(".midtext").show();
             }
-        }
+            else {
+                elem.webkitRequestFullScreen();
+                $(".midtext").hide();
+            };
+        });
     </script>
     <script src="/iris-ws.js" type="text/javascript"></script>
     <script src="/static/js/server.js" type="text/javascript"></script>
