@@ -2,8 +2,6 @@ $(function () {
     var p = "ws";
     if (location.protocol == 'https:') {
         p = "wss";
-    } else {
-        p = "ws";
     }
     w = new Ws(p + "://" + HOST + "/ws");
 
