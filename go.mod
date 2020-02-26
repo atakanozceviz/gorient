@@ -1,3 +1,4 @@
+// +heroku goVersion go1.14
 module github.com/atakanozceviz/gorient
 
 go 1.13
